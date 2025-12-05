@@ -21,7 +21,7 @@ android {
                 keyPassword = keyPassword
             } else {
                 // fallback for local dev
-                println("WARNING: Release keystore not found, using debug signing")
+                println("WARNING: Release keystore $keystoreFile (${keystoreFile?.absolutePath}) not found, using debug signing")
                 storeFile = file("$projectDir/debug.keystore")
                 storePassword = "android"
                 keyAlias = "androiddebugkey"
