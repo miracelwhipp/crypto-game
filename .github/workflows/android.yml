@@ -42,6 +42,10 @@ jobs:
       - name: Make gradlew executable
         run: chmod +x ./gradlew
 
+      - name: Decode keystore
+        run: echo "${{ secrets.ANDROID_KEYSTORE_BASE64 }}" | base64 --decode > app/cryptogame-release-key.keystore && ls -al app
+
+
       - name: Run unit tests
         run: ./gradlew testDebugUnitTest
 
@@ -80,7 +84,7 @@ jobs:
         run: chmod +x ./gradlew
 
       - name: Decode keystore
-        run: echo "${{ secrets.ANDROID_KEYSTORE_BASE64 }}" | base64 --decode > cryptogame-release-key.keystore
+        run: echo "${{ secrets.ANDROID_KEYSTORE_BASE64 }}" | base64 --decode > app/cryptogame-release-key.keystore && ls -al app
 
       - name: Build release artifacts
         env:
