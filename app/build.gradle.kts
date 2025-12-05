@@ -4,21 +4,15 @@ plugins {
     alias(libs.plugins.kotlin.compose)
 }
 
-val keystoreFile = System.getenv("ANDROID_KEYSTORE")?.let { file(it) }
-val keystorePassword = System.getenv("KEYSTORE_PASSWORD")
-val keyAlias = System.getenv("KEY_ALIAS")
-val keyPassword = System.getenv("KEY_PASSWORD")
-
-
 android {
 
     signingConfigs {
         create("release") {
             if (keystoreFile != null && keystoreFile.exists()) {
                 storeFile = keystoreFile
-                storePassword = keystorePassword
-                keyAlias = keyAlias
-                keyPassword = keyPassword
+                storePassword = System.getenv("KEYSTORE_PASSWORD")
+                keyAlias = System.getenv("KEY_ALIAS")
+                keyPassword = System.getenv("KEY_PASSWORD")
             } else {
                 // fallback for local dev
                 println("WARNING: Release keystore $keystoreFile (${keystoreFile?.absolutePath}) not found, using debug signing")
