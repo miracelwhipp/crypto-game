@@ -47,6 +47,8 @@ jobs:
 
 
       - name: Run unit tests
+        env:
+          ANDROID_KEYSTORE: cryptogame-release-key.keystore
         run: ./gradlew testDebugUnitTest
 
       - name: Build debug APK
