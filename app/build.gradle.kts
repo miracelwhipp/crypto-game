@@ -4,7 +4,32 @@ plugins {
     alias(libs.plugins.kotlin.compose)
 }
 
+val keystoreFile = System.getenv("ANDROID_KEYSTORE")?.let { file(it) }
+val keystorePassword = System.getenv("KEYSTORE_PASSWORD")
+val keyAlias = System.getenv("KEY_ALIAS")
+val keyPassword = System.getenv("KEY_PASSWORD")
+
+
 android {
+
+    signingConfigs {
+        create("release") {
+            if (keystoreFile != null && keystoreFile.exists()) {
+                storeFile = keystoreFile
+                storePassword = keystorePassword
+                keyAlias = keyAlias
+                keyPassword = keyPassword
+            } else {
+                // fallback for local dev
+                println("WARNING: Release keystore not found, using debug signing")
+                storeFile = file("$projectDir/debug.keystore")
+                storePassword = "android"
+                keyAlias = "androiddebugkey"
+                keyPassword = "android"
+            }
+        }
+    }
+
     namespace = "io.github.miracelwhipp.cryptogame"
     compileSdk {
         version = release(36)
@@ -23,6 +48,7 @@ android {
     buildTypes {
         release {
             isMinifyEnabled = false
+            signingConfig = signingConfigs.getByName("release")
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
