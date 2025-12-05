@@ -48,7 +48,7 @@ class Cypher private constructor(
     companion object {
 
         // TODO: more international symbols. at least danish
-        const val CHARACTERS_TO_ENCODE_LOWERCASE = "abcdefghijklmnopqrstuvwxyzäöü"
+        const val CHARACTERS_TO_ENCODE_LOWERCASE = "abcdefghijklmnopqrstuvwxyzäöüß"
 
         val CHARACTERS_TO_ENCODE =
             (CHARACTERS_TO_ENCODE_LOWERCASE + CHARACTERS_TO_ENCODE_LOWERCASE.uppercase(Locale.ROOT)).toSet()
@@ -62,12 +62,21 @@ class Cypher private constructor(
 
             for (sourceCharacter in CHARACTERS_TO_ENCODE) {
 
+                if (substitution.keys.contains(sourceCharacter)) {
+
+                    continue
+                }
+
                 val index = Random.nextInt(substitutionTarget.size)
 
                 val targetCharacter = substitutionTarget.removeAt(index)
+                substitutionTarget.remove(sourceCharacter)
 
                 substitution[sourceCharacter] = targetCharacter
                 reverseSubstitution[targetCharacter] = sourceCharacter
+
+                substitution[targetCharacter] = sourceCharacter
+                reverseSubstitution[sourceCharacter] = targetCharacter
             }
 
             return Cypher(

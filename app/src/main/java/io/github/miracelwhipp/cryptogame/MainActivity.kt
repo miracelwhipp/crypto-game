@@ -25,8 +25,11 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.TextLayoutResult
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import io.github.miracelwhipp.cryptogame.ui.theme.CryptoGameTheme
 
 class MainActivity : ComponentActivity() {
@@ -37,31 +40,10 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             CryptoGameTheme {
-
-                var riddle by remember { mutableStateOf(CryptoRiddle.randomRiddle()) }
-                var solution by remember { mutableStateOf(riddle.cypher.decrypt(riddle.text)) }
-
-
                 Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-                    Column(modifier = Modifier.padding(16.dp)) {
-                        CryptoRiddleUI(
-                            modifier = Modifier.padding(innerPadding),
-                            riddle
-                        )
-//                        Spacer(modifier = Modifier.height(12.dp))
-//                        Surface(color = Color.Red) {
-//                            Text(
-//                                text = solution
-//                            )
-//                        }
-                        Spacer(modifier = Modifier.height(12.dp))
-                        Button(onClick = {
-                            riddle = CryptoRiddle.randomRiddle()
-                            solution = riddle.cypher.decrypt(riddle.text)
-                        }) {
-                            Text("Neues Rätsel")
-                        }
-                    }
+                    CryptoRiddleUI(
+                        modifier = Modifier.padding(innerPadding),
+                    )
                 }
             }
         }
@@ -72,29 +54,49 @@ class MainActivity : ComponentActivity() {
 @Composable
 fun CryptoRiddleUI(
     modifier: Modifier = Modifier,
-    riddle: CryptoRiddle = CryptoRiddle.randomRiddle(),
 ) {
     val context = LocalContext.current
     var textLayoutResult by remember { mutableStateOf<TextLayoutResult?>(null) }
     var showDialog by remember { mutableStateOf(false) }
     var tappedChar by remember { mutableStateOf<Char?>(null) }
 
-    Surface(color = Color.Cyan) {
-        Text(
-            text = riddle.text,
-            onTextLayout = { textLayoutResult = it },
-            modifier = modifier.pointerInput(Unit) {
-                detectTapGestures { offset ->
+    var riddle by remember { mutableStateOf(CryptoRiddle.randomRiddle()) }
+    var solution by remember { mutableStateOf(riddle.cypher.decrypt(riddle.text)) }
 
-                    val index = textLayoutResult?.getOffsetForPosition(offset)
 
-                    index?.let {
 
-                        val realIndex = it - 1
+    Column(modifier = Modifier.padding(16.dp)) {
+        Button(onClick = {
+            riddle = CryptoRiddle.randomRiddle()
+            solution = riddle.cypher.decrypt(riddle.text)
+        }) {
+            Text("Neues Rätsel")
+        }
+        Spacer(modifier = Modifier.height(12.dp))
+        Surface(color = Color.Cyan) {
+            Text(
+                text = riddle.text,
+                onTextLayout = { textLayoutResult = it },
+                style = TextStyle(
+                    fontSize = 23.sp,
+                    fontFamily = FontFamily.Monospace
+                ),
+                modifier = modifier.pointerInput(Unit) {
+                    detectTapGestures { offset ->
 
-                        if (realIndex in riddle.text.indices) {
+                        val layout = textLayoutResult ?: return@detectTapGestures
 
-                            tappedChar = riddle.text[realIndex]
+                        val raw = layout.getOffsetForPosition(offset)
+                        val charX = layout.getHorizontalPosition(raw, usePrimaryDirection = true)
+
+                        val index =
+                            if (raw > 0 && offset.x < charX) raw - 1 else raw
+
+                        val tappedIndex = index.coerceIn(0, riddle.text.length - 1)
+
+                        if (tappedIndex in riddle.text.indices) {
+
+                            tappedChar = riddle.text[index]
 
                             if (tappedChar != null && riddle.canBeGuessed(tappedChar!!)) {
                                 showDialog = true
@@ -102,9 +104,16 @@ fun CryptoRiddleUI(
                         }
                     }
                 }
-            }
-        )
+            )
+        }
+//                        Spacer(modifier = Modifier.height(12.dp))
+//                        Surface(color = Color.Red) {
+//                            Text(
+//                                text = solution
+//                            )
+//                        }
     }
+
 
     if (showDialog && tappedChar != null) {
 
@@ -120,6 +129,15 @@ fun CryptoRiddleUI(
                         "Richtig",
                         Toast.LENGTH_SHORT
                     ).show()
+
+                    if (riddle.isSolved()) {
+
+                        Toast.makeText(
+                            context,
+                            "Geschafft! Nochmal?",
+                            Toast.LENGTH_SHORT
+                        ).show()
+                    }
 
                 } else {
 
