@@ -4,6 +4,8 @@ plugins {
     alias(libs.plugins.kotlin.compose)
 }
 
+val keystoreFile = System.getenv("ANDROID_KEYSTORE")?.let { file(it) }
+
 android {
 
     signingConfigs {
