@@ -35,9 +35,8 @@ android {
         applicationId = "io.github.miracelwhipp.cryptogame"
         minSdk = 24
         targetSdk = 36
-        versionCode = 1
-        versionName = "1.0"
-
+        versionCode = if (project.hasProperty("versionCode")) project.property("versionCode").toString().toInt() else 1
+        versionName = if (project.hasProperty("versionName")) project.property("versionName").toString() else "0.0.0"   // fallback for local builds
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
 

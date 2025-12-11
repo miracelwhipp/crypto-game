@@ -60,14 +60,12 @@ fun CryptoRiddleUI(
     var showDialog by remember { mutableStateOf(false) }
     var tappedChar by remember { mutableStateOf<Char?>(null) }
 
-    var riddle by remember { mutableStateOf(CryptoRiddle.randomRiddle()) }
+    var riddle by remember { mutableStateOf(CryptoRiddle.randomRiddle(context)) }
     var solution by remember { mutableStateOf(riddle.cypher.decrypt(riddle.text)) }
-
-
 
     Column(modifier = Modifier.padding(16.dp)) {
         Button(onClick = {
-            riddle = CryptoRiddle.randomRiddle()
+            riddle = CryptoRiddle.randomRiddle(context)
             solution = riddle.cypher.decrypt(riddle.text)
         }) {
             Text("Neues Rätsel")

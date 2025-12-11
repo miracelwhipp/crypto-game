@@ -1,5 +1,8 @@
 package io.github.miracelwhipp.cryptogame
 
+import android.content.Context
+import java.util.Locale
+
 class CryptoRiddle(
     var cypher: Cypher,
     var text: String,
@@ -8,7 +11,7 @@ class CryptoRiddle(
 
     fun canBeGuessed(character: Char): Boolean {
 
-        return cypher.substitution.containsKey(character)
+        return cypher.reverseSubstitution.containsKey(character)
     }
 
     fun guessCharacter(encrypted: Char, decrypted: Char): Boolean {
@@ -31,15 +34,16 @@ class CryptoRiddle(
 
     companion object {
 
-        fun randomRiddle(): CryptoRiddle {
+        fun randomRiddle(context: Context): CryptoRiddle {
 
-            var original = TextSource.DEFAULT.getRandomSentences()
+            var original = TextSource.defaultSource(context).getRandomSentences().lowercase(Locale.ROOT)
 
             val cypher = Cypher.randomKey()
 
             var index = 0
 
-            while (original.length > index && !cypher.reverseSubstitution.containsKey(original[index])) {
+            // always start with an encrypted letter
+            while (original.length > index && !cypher.substitution.containsKey(original[index])) {
                 index++
             }
 

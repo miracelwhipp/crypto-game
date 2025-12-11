@@ -40,7 +40,7 @@ class Cypher private constructor(
 
         return Cypher(
             mutableSubstitution.toMap(),
-            mutableSubstitution.toMap()
+            mutableReverseSubstitution.toMap()
         )
     }
 
@@ -48,14 +48,11 @@ class Cypher private constructor(
     companion object {
 
         // TODO: more international symbols. at least danish
-        const val CHARACTERS_TO_ENCODE_LOWERCASE = "abcdefghijklmnopqrstuvwxyzäöüß"
-
-        val CHARACTERS_TO_ENCODE =
-            (CHARACTERS_TO_ENCODE_LOWERCASE + CHARACTERS_TO_ENCODE_LOWERCASE.uppercase(Locale.ROOT)).toSet()
+        val CHARACTERS_TO_ENCODE = "abcdefghijklmnopqrstuvwxyzäöü".lowercase(Locale.ROOT).toSet() // yeah, that's paranoid
 
         fun randomKey(): Cypher {
 
-            val substitutionTarget = CHARACTERS_TO_ENCODE.toSet().toMutableList()
+            val substitutionTarget = CHARACTERS_TO_ENCODE.toMutableList()
 
             val substitution = mutableMapOf<Char, Char>()
             val reverseSubstitution = mutableMapOf<Char, Char>()
@@ -69,14 +66,10 @@ class Cypher private constructor(
 
                 val index = Random.nextInt(substitutionTarget.size)
 
-                val targetCharacter = substitutionTarget.removeAt(index)
-                substitutionTarget.remove(sourceCharacter)
+                val targetCharacter = substitutionTarget.removeAt(index).uppercaseChar()
 
                 substitution[sourceCharacter] = targetCharacter
                 reverseSubstitution[targetCharacter] = sourceCharacter
-
-                substitution[targetCharacter] = sourceCharacter
-                reverseSubstitution[sourceCharacter] = targetCharacter
             }
 
             return Cypher(
