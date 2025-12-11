@@ -1,11 +1,10 @@
 package io.github.miracelwhipp.cryptogame
 
 import android.content.Context
-import io.github.miracelwhipp.cryptogame.TextSource
 import java.nio.charset.StandardCharsets
 import kotlin.random.Random
 
-class TextSource private constructor(
+class TextSource constructor(
     val texts: List<String>,
     val minimumTextSize: Int,
     val maximumTextSize: Int
@@ -62,13 +61,13 @@ class TextSource private constructor(
 
     companion object {
 
-        var DEF: TextSource? = null
+        private var DEFAULT: TextSource? = null
 
         fun defaultSource(context: Context): TextSource {
 
-            if (DEF != null) {
+            if (DEFAULT != null) {
 
-                return DEF!!
+                return DEFAULT!!
             }
 
             val source1 = context.assets.open("untertan.txt")
@@ -76,9 +75,9 @@ class TextSource private constructor(
                 .use { it.readText() }
 
 
-            DEF = TextSource(listOf(source1), 50, 300)
+            DEFAULT = TextSource(listOf(source1), 50, 300)
 
-            return DEF!!
+            return DEFAULT!!
         }
     }
 }
