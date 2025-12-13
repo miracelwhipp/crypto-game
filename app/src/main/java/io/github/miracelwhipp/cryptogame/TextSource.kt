@@ -61,6 +61,34 @@ class TextSource constructor(
 
     companion object {
 
+        private val assets = listOf(
+            "3männleinimwalde.txt",
+            "3spinnerinnen.txt",
+            "7geißlein.txt",
+            "7raben.txt",
+            "12brüder.txt",
+            "aschenputttel.txt",
+            "bremerstadtmusikanten.txt",
+            "brüderchenundschwesterchen.txt",
+            "dornrösschen.txt",
+            "frauholle.txt",
+            "froschkönig.txt",
+            "furcht.txt",
+            "hänselundgretel.txt",
+            "katzundmaus.txt",
+            "lumpengesindel.txt",
+            "marienkind.txt",
+            "rapunzel.txt",
+            "rotkäppchen.txt",
+            "rumpelstilzchen.txt",
+            "schneewittchen.txt",
+            "spielmann.txt",
+            "tapferesschneiderlein.txt",
+            "tischlein.txt",
+            "treuerjohannes.txt",
+            "untertan.txt"
+        )
+
         private var DEFAULT: TextSource? = null
 
         fun defaultSource(context: Context): TextSource {
@@ -70,12 +98,11 @@ class TextSource constructor(
                 return DEFAULT!!
             }
 
-            val source1 = context.assets.open("untertan.txt")
-                .bufferedReader(StandardCharsets.UTF_8)
+            val sources = assets.map { asset -> context.assets.open(asset).bufferedReader(StandardCharsets.UTF_8)
                 .use { it.readText() }
+            }
 
-
-            DEFAULT = TextSource(listOf(source1), 50, 300)
+            DEFAULT = TextSource(sources, 50, 300)
 
             return DEFAULT!!
         }
