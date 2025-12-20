@@ -11,6 +11,8 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
@@ -63,7 +65,9 @@ fun CryptoRiddleUI(
     var riddle by remember { mutableStateOf(CryptoRiddle.randomRiddle(context)) }
     var solution by remember { mutableStateOf(riddle.cypher.decrypt(riddle.text)) }
 
-    Column(modifier = Modifier.padding(16.dp)) {
+    val scrollState = rememberScrollState()
+
+    Column(modifier = Modifier.padding(16.dp).verticalScroll(scrollState)) {
         Button(onClick = {
             riddle = CryptoRiddle.randomRiddle(context)
             solution = riddle.cypher.decrypt(riddle.text)
